@@ -1,231 +1,239 @@
-# 🗓️ EMS — Event Management System
+# 🎉 EMS — Event Management System
 
-A production-ready Django web application for managing the full lifecycle of events — from creation to analytics.
+A production-ready **Django Event Management System** that helps organizations create, manage, and analyze events efficiently. The application provides secure role-based access, event registration, analytics, email notifications, and profile management.
 
 ---
 
 ## ✨ Features
 
-| Feature | Details |
-|---|---|
-| **Role-Based Access** | Admin, Event Manager, Attendee |
-| **Event Management** | Create, edit, delete, publish/unpublish |
-| **Smart Registration** | Seat tracking, waitlist promotion, cancel & auto-promote |
-| **Analytics Dashboard** | Google Charts: Pie, Line, Bar, Gauge |
-| **Email Notifications** | HTML emails via Django signals (SMTP) |
-| **Profile System** | Avatar upload, bio, registration history |
-| **CSV Export** | Admin exports for events and registrations |
-| **Responsive UI** | Bootstrap 5, custom CSS, mobile-first |
+| Feature | Description |
+|---------|-------------|
+| 🔐 Role-Based Access Control | Admin, Event Manager and Attendee roles |
+| 📅 Event Management | Create, edit, publish, unpublish and delete events |
+| 🎟 Event Registration | Register for events with duplicate registration prevention |
+| ⏳ Waitlist Management | Automatic waitlist promotion when seats become available |
+| 📊 Analytics Dashboard | Interactive Pie, Line, Bar and Gauge charts |
+| 📧 Email Notifications | Email confirmation using Django Signals |
+| 👤 User Profile | Avatar upload, bio and profile management |
+| 📁 CSV Export | Export events and registrations |
+| 📱 Responsive Design | Bootstrap 5 with mobile-friendly UI |
 
 ---
 
-## 🚀 Quick Start
+# 🚀 Tech Stack
 
-### Option A — Automated Setup Script
-
-```bash
-git clone <repo-url>
-cd ems_project
-chmod +x setup.sh
-./setup.sh
-python manage.py runserver
-```
-
-### Option B — Manual Setup
-
-```bash
-# 1. Create & activate virtual environment
-python3 -m venv venv
-source venv/bin/activate          # Windows: venv\Scripts\activate
-
-# 2. Install dependencies
-pip install -r requirements.txt
-
-# 3. Apply database migrations
-python manage.py migrate
-
-# 4. Seed demo data (optional but recommended)
-python manage.py seed_data
-
-# 5. Start development server
-python manage.py runserver
-```
-
-Open **http://127.0.0.1:8000** in your browser.
+- Python 3
+- Django
+- SQLite
+- Bootstrap 5
+- HTML5
+- CSS3
+- JavaScript
+- Google Charts
+- Django Signals
 
 ---
 
-## 🔐 Demo Accounts
+# 👥 User Roles
 
-| Username | Password | Role |
-|---|---|---|
-| `admin` | `admin123` | Admin |
-| `alice_mgr` | `manager123` | Event Manager |
-| `bob_mgr` | `manager123` | Event Manager |
-| `john_doe` | `attendee123` | Attendee |
-| `jane_smith` | `attendee123` | Attendee |
+## 👨‍💼 Admin
 
----
+- Manage all users
+- Manage all events
+- Delete any event
+- View analytics
+- Export CSV
+- Manage user roles
 
-## 📁 Project Structure
+## 👨‍💻 Event Manager
 
-```
-ems_project/
-├── config/                    # Django project settings
-│   ├── settings.py
-│   ├── urls.py
-│   └── wsgi.py
-├── ems/                       # Main application
-│   ├── models.py              # Profile, Event, Registration
-│   ├── views.py               # All views (auth, events, registrations, analytics)
-│   ├── urls.py                # URL routing
-│   ├── forms.py               # All forms
-│   ├── signals.py             # Profile auto-create + email notifications
-│   ├── decorators.py          # RBAC decorators
-│   ├── admin.py               # Django admin
-│   ├── context_processors.py  # Global template context
-│   ├── apps.py                # App config (signals registration)
-│   ├── migrations/
-│   ├── templatetags/
-│   │   └── ems_tags.py        # Custom template filters
-│   ├── templates/ems/
-│   │   ├── base.html
-│   │   ├── home.html
-│   │   ├── dashboard.html
-│   │   ├── auth/              # login.html, register.html
-│   │   ├── events/            # list, detail, form, manager_list, delete_confirm
-│   │   ├── registrations/     # my_list, event_list
-│   │   ├── analytics/         # dashboard.html (Google Charts)
-│   │   ├── profile/           # view.html, edit.html
-│   │   ├── admin/             # users.html, user_role.html
-│   │   ├── emails/            # HTML email templates
-│   │   └── partials/          # event_card.html
-│   ├── static/ems/
-│   │   ├── css/main.css
-│   │   ├── js/main.js
-│   │   └── img/default_avatar.svg
-│   └── management/commands/
-│       └── seed_data.py
-├── manage.py
-├── requirements.txt
-└── setup.sh
-```
+- Create events
+- Edit own events
+- Delete own events
+- View own registrations
+- View analytics
+
+## 🙋 Attendee
+
+- Register for events
+- Cancel registration
+- View registered events
+- Manage profile
 
 ---
 
-## 📊 Database Schema
-
-```
-User (Django built-in)
-  └── Profile (OneToOne)
-        role: admin | manager | attendee
-        avatar, phone, bio
-
-Event
-  created_by → User (Manager)
-  title, description, category, venue, date
-  total_seats, status, banner, tags
-
-Registration
-  user → User
-  event → Event
-  UNIQUE (user, event)          ← prevents duplicates
-  registration_id               ← auto-generated "EMS-XXXXXX"
-  status: confirmed | waitlisted | cancelled
-```
-
----
-
-## 🌐 URL Map
-
-| URL | View | Access |
-|---|---|---|
-| `/` | Home / Landing | Public |
-| `/events/` | Browse Events | Public |
-| `/events/<slug>/` | Event Detail | Public |
-| `/register/` | Sign Up | Public |
-| `/login/` | Login | Public |
-| `/dashboard/` | Role Dashboard | Logged In |
-| `/events/create/` | Create Event | Manager/Admin |
-| `/events/<slug>/edit/` | Edit Event | Owner/Admin |
-| `/events/<slug>/delete/` | Delete Event | Owner/Admin |
-| `/my-events/` | Manager's Events | Manager/Admin |
-| `/events/<slug>/register/` | Register (POST) | Attendee |
-| `/my-registrations/` | My Tickets | Attendee |
-| `/analytics/` | Charts Dashboard | Manager/Admin |
-| `/api/analytics/categories/` | JSON: Category Pie | Manager/Admin |
-| `/api/analytics/monthly/` | JSON: Monthly Line | Manager/Admin |
-| `/api/analytics/events/` | JSON: Event Bar | Manager/Admin |
-| `/api/analytics/occupancy/` | JSON: Gauge | Manager/Admin |
-| `/profile/` | View Profile | Logged In |
-| `/profile/edit/` | Edit Profile | Logged In |
-| `/admin-panel/users/` | User Management | Admin |
-| `/admin-panel/export/registrations/` | CSV Export | Admin |
-| `/admin-panel/export/events/` | CSV Export | Admin |
-| `/admin/` | Django Admin | Superuser |
-
----
-
-## ⚙️ Email Configuration
-
-Edit `config/settings.py`:
-
-```python
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'your-email@gmail.com'
-EMAIL_HOST_PASSWORD = 'your-app-password'   # Gmail App Password
-DEFAULT_FROM_EMAIL = 'EMS <your-email@gmail.com>'
-```
-
-> For development without SMTP, switch to console backend:
-> `EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'`
-
----
-
-## 🎯 RBAC Summary
+# 📊 RBAC Summary
 
 | Action | Admin | Manager | Attendee |
-|---|:---:|:---:|:---:|
+|---------|:----:|:------:|:--------:|
 | Create Event | ✅ | ✅ | ❌ |
-| Edit Own Events | ✅ | ✅ | ❌ |
-| Edit Any Event | ✅ | ❌ | ❌ |
-| Delete Event | ✅ | Own only | ❌ |
-| View All Attendees | ✅ | Own events | ❌ |
-| Register for Events | ❌ | ❌ | ✅ |
-| Analytics Dashboard | ✅ | Own events | ❌ |
-| Manage Users | ✅ | ❌ | ❌ |
+| Edit Event | ✅ | Own | ❌ |
+| Delete Event | ✅ | Own | ❌ |
+| Register Event | ❌ | ❌ | ✅ |
+| Analytics | ✅ | ✅ | ❌ |
 | Export CSV | ✅ | ❌ | ❌ |
 
 ---
 
-## 🧪 Test Checklist
+# 📂 Project Structure
 
-- [ ] Register new user as Attendee and Manager
-- [ ] Login/logout works for all roles
-- [ ] Manager can create, edit, publish, delete events
-- [ ] Attendee can register; duplicate registration blocked
-- [ ] Event full → Attendee added to waitlist
-- [ ] Cancel registration → waitlisted user auto-promoted
-- [ ] Analytics charts render (Pie, Line, Bar, Gauge)
-- [ ] Profile edit with avatar upload
-- [ ] Admin can change user roles
-- [ ] CSV export downloads correctly
-- [ ] Email sent on registration (check console or SMTP)
-- [ ] Unauthorized access redirected with error message
+```text
+SmartEventManagement/
+├── config/
+├── ems/
+├── media/
+├── manage.py
+├── requirements.txt
+├── README.md
+```
 
 ---
 
-## 🛡️ Production Checklist
+# 🗄 Database Models
 
-- [ ] Set `DEBUG = False`
-- [ ] Set strong `SECRET_KEY` from environment variable
-- [ ] Configure real SMTP credentials
-- [ ] Run `python manage.py collectstatic`
-- [ ] Use PostgreSQL instead of SQLite
-- [ ] Set `ALLOWED_HOSTS` to your domain
-- [ ] Configure HTTPS / SSL
-# SmartEventManagement
-# SmartEventManagement
+## User
+- Username
+- Email
+- Password
+
+## Profile
+- Avatar
+- Bio
+- Phone
+- Role
+
+## Event
+- Title
+- Description
+- Category
+- Venue
+- Date
+- Banner
+- Total Seats
+- Status
+
+## Registration
+- User
+- Event
+- Registration ID
+- Status
+
+---
+
+# 🌐 URL Overview
+
+| URL | Description |
+|------|-------------|
+| / | Home |
+| /login | Login |
+| /register | Register |
+| /dashboard | Dashboard |
+| /events | Event List |
+| /events/create | Create Event |
+| /analytics | Analytics |
+| /profile | Profile |
+| /admin | Django Admin |
+
+---
+
+# ⚙ Installation
+
+```bash
+git clone https://github.com/bhupendrakushwaha0108/SmartEventManagement.git
+cd SmartEventManagement
+
+python3 -m venv venv
+source venv/bin/activate
+
+pip install -r requirements.txt
+
+python manage.py migrate
+
+python manage.py createsuperuser
+
+python manage.py runserver
+```
+
+Open:
+
+```
+http://127.0.0.1:8000/
+```
+
+---
+
+# 📧 Email Configuration
+
+```python
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "your-email@gmail.com"
+EMAIL_HOST_PASSWORD = "your-app-password"
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+```
+
+---
+
+# 🧪 Testing Checklist
+
+- User Registration
+- Login & Logout
+- Create Event
+- Edit Event
+- Delete Event
+- Register for Event
+- Waitlist Promotion
+- Analytics Charts
+- CSV Export
+- Email Notification
+- Role Permissions
+
+---
+
+# 🔒 Production Checklist
+
+- DEBUG=False
+- Secure SECRET_KEY
+- PostgreSQL
+- HTTPS
+- ALLOWED_HOSTS
+- Collect Static Files
+
+---
+
+# 🚀 Future Improvements
+
+- REST API
+- JWT Authentication
+- Docker Support
+- Redis Cache
+- Celery
+- Payment Gateway
+- QR Code Attendance
+- Event Scanner
+
+---
+
+# 🤝 Contributing
+
+Contributions are welcome. Fork the repository and submit a pull request.
+
+---
+
+# 📜 License
+
+This project is created for educational and portfolio purposes.
+
+---
+
+# 👨‍💻 Author
+
+**Bhupendra Kushwaha**
+
+Python Full Stack Developer
+
+GitHub: https://github.com/bhupendrakushwaha0108
+
+⭐ If you found this project useful, consider giving it a star.
